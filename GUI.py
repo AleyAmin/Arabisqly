@@ -1,7 +1,7 @@
 import tkinter as tk
 from tkinter import ttk
 from tkinter import messagebox
-from ttkbootstrap import Window,Button
+from ttkbootstrap import Window,Button,DateEntry
 from Connect_Database import *
 
 cursor, conn = connect_to_database(DRIVER, SERVER, DATABASE)
@@ -13,7 +13,7 @@ class LoginPage:
         self.content = tk.Frame(main_window)
         self.Job = None
         self.create_widgets()
-
+        
     def create_widgets(self):
         self.id_label = tk.Label(self.content, text="Id:")
         self.id_label.pack(pady=5)
@@ -55,7 +55,7 @@ class LoginPage:
                 self.password_entry.delete(0,'end')
 
         except Exception as e:
-            messagebox.showerror("Error", str(e))
+            messagebox.showerror("Error", "Login Failed. Try Again")
     
     def show_frame(self):
         self.content.pack(fill="both", expand=True)
@@ -83,7 +83,7 @@ class ManagerPage:
         self.managerId = login_page.id_var.get()
         self.content = tk.Frame(main_window)
         self.createWidgets()
-        
+
     def createWidgets(self):
         self.form_frame = tk.Frame(self.content)
 
@@ -113,6 +113,8 @@ class ManagerPage:
         self.emp_Table.heading('Id', text='Id')
         self.emp_Table.heading('sex', text='Sex')
         self.emp_Table.heading('Job', text='Job')
+        self.emp_Table.bind('<KeyPress-Escape>',lambda event : self.backtologin())
+
 
         for emp in employees:
              self.emp_Table.insert(parent='',index=tk.END,values=emp)
@@ -150,6 +152,19 @@ class ManagerPage:
 
         self.emp_Table.pack(expand=True)
 
+    def reset_vars(self):
+        self.var1.set('')
+        self.var2.set('')
+        self.var3.set('')
+        self.var4.set('')
+        self.var5.set('')
+        self.var6.set('')
+        self.var7.set('')
+        self.var8.set('')
+        self.var9.set('')
+        self.var10.set('')
+        self.var11.set('')
+    
     def hide_formpage(self):
         self.form_frame.pack_forget()
 
@@ -159,6 +174,8 @@ class ManagerPage:
         self.frame_noofoorders.pack_forget()
         self.frame_noofemps.pack_forget()
         self.form_frame.pack()
+        if page == "Add":
+            self.reset_vars()
 
         self.frame1 = tk.Frame(self.form_frame)
         self.frame1.pack(side='top',expand=True,fill='both')
@@ -197,66 +214,69 @@ class ManagerPage:
         self.frame12.pack(side='top',expand=True,fill='both')
 
         self.label1 = tk.Label(self.frame1, text="SSN:")
-        self.label1.pack(side='left',pady=5)
+        self.label1.pack(side='left',pady=5,expand=True)
         self.entry1 = tk.Entry(self.frame1, textvariable=self.var1)
-        self.entry1.pack(pady=5)
+        self.entry1.pack(pady=5,expand=True)
 
         self.label2 = tk.Label(self.frame2, text="Id:")
-        self.label2.pack(side='left',pady=5)
+        self.label2.pack(side='left',pady=5,expand=True)
         self.entry2 = tk.Entry(self.frame2, textvariable=self.var2,state='disabled')
-        self.entry2.pack(pady=5)
+        self.entry2.pack(pady=5,expand=True)
 
         self.label3 = tk.Label(self.frame3, text="Password:")
-        self.label3.pack(side='left',pady=5)
+        self.label3.pack(side='left',pady=5,expand=True)
         self.entry3 = tk.Entry(self.frame3, textvariable=self.var3)
-        self.entry3.pack(pady=5)
+        self.entry3.pack(pady=5,expand=True)
 
         self.label4 = tk.Label(self.frame4, text="Name:")
-        self.label4.pack(side='left',pady=5)
+        self.label4.pack(side='left',pady=5,expand=True)
         self.entry4 = tk.Entry(self.frame4, textvariable=self.var4)
-        self.entry4.pack(pady=5)
+        self.entry4.pack(pady=5,expand=True)
         
         self.label5 = tk.Label(self.frame5, text="Sex:")
-        self.label5.pack(side='left',pady=5)
+        self.label5.pack(side='left',pady=5,expand=True)
         self.entry5 = tk.Entry(self.frame5, textvariable=self.var5)
-        self.entry5.pack(pady=5)
+        self.entry5.pack(pady=5,expand=True)
 
         self.label6 = tk.Label(self.frame6, text="Salary:")
-        self.label6.pack(side='left',pady=5)
+        self.label6.pack(side='left',pady=5,expand=True)
         self.entry6 = tk.Entry(self.frame6, textvariable=self.var6)
-        self.entry6.pack(pady=5)
+        self.entry6.pack(pady=5,expand=True)
 
         self.label7 = tk.Label(self.frame7, text="Birth Date:")
-        self.label7.pack(side='left',pady=5)
+        self.label7.pack(side='left',pady=5,expand=True)
         self.entry7 = tk.Entry(self.frame7, textvariable=self.var7)
-        self.entry7.pack(pady=5)
+        self.entry7.pack(pady=5,expand=True)
 
         self.label8 = tk.Label(self.frame8, text="Address:")
-        self.label8.pack(side='left',pady=5)
+        self.label8.pack(side='left',pady=5,expand=True)
         self.entry8 = tk.Entry(self.frame8, textvariable=self.var8)
-        self.entry8.pack(pady=5)
+        self.entry8.pack(pady=5,expand=True)
 
         self.label9 = tk.Label(self.frame9, text="SuperSSN:")
-        self.label9.pack(side='left',pady=5)
+        self.label9.pack(side='left',pady=5,expand=True)
         self.entry9 = tk.Entry(self.frame9, textvariable=self.var9)
-        self.entry9.pack(pady=5)
+        self.entry9.pack(pady=5,expand=True)
 
         self.label10 = tk.Label(self.frame10, text="Branch:")
-        self.label10.pack(side='left',pady=5)
+        self.label10.pack(side='left',pady=5,expand=True)
         self.entry10 = tk.Entry(self.frame10, textvariable=self.var10)
-        self.entry10.pack(pady=5)
+        self.entry10.pack(pady=5,expand=True)
 
         self.label11 = tk.Label(self.frame11, text="Job:")
-        self.label11.pack(side='left',pady=5)
+        self.label11.pack(side='left',pady=5,expand=True)
         self.entry11 = tk.Entry(self.frame11, textvariable=self.var11)
-        self.entry11.pack(pady=5)
+        self.entry11.pack(pady=5,expand=True)
 
         if page == "update":
             self.save_button = tk.Button(self.frame12, text="Save", command=self.updateEmployee)
-            self.save_button.pack(pady=10)
+            self.save_button.pack(side='left',padx= 10,pady=35, ipadx= 10, ipady=10,expand=True)
         elif page == "Add":
             self.save_button = tk.Button(self.frame12, text="Save", command=self.addEmployee)
-            self.save_button.pack(pady=10)
+            self.save_button.pack(side='left',padx= 10,pady=35, ipadx= 10, ipady=10,expand=True)
+
+        self.back_button = tk.Button(self.frame12, text="Back", command=self.hide_form_page)
+        self.back_button.pack(side='left', pady=35, ipadx= 10, ipady=10, expand=True)
    
     def updateEmployee(self):
         SSN = self.var1.get()
@@ -272,6 +292,8 @@ class ManagerPage:
         job = self.var11.get()
         cursor.execute("exec update_Employee ?,?,?,?,?,?,?,?,?,?,?",(emp_id,SSN,password,name,sex,salary,birth_date,address,super_ssn,branch,job))
         cursor.commit()
+
+    def hide_form_page(self):
         self.hide_formpage()
         self.createWidgets()
         
@@ -288,8 +310,7 @@ class ManagerPage:
         job = self.var11.get()
         cursor.execute("exec AddEmployee ?,?,?,?,?,?,?,?,?,?",(SSN,password,name,sex,salary,birth_date,address,super_ssn,branch,job))
         cursor.commit()
-        self.hide_formpage()
-        self.createWidgets()
+        self.hide_form_page()
 
     def getEmpbyid(self):
         id = self.deleteobj[1]
@@ -338,9 +359,22 @@ class ManagerPage:
     
     def show_frame(self):
         self.content.pack(expand=True,fill='both')
+    
     def hide_frame(self):
         self.content.pack_forget()
 
+    def backtologin(self):
+        login_page.id_entry.delete(0,'end')
+        login_page.password_entry.delete(0,'end')
+        self.frame_buttons.pack_forget()
+        self.frame_employeestable.pack_forget()
+        self.frame_noofoorders.pack_forget()
+        self.frame_noofemps.pack_forget()
+        self.content.pack_forget()
+        main_window_label.pack(expand=True,fill="both")
+        main_buttons.pack(side='bottom',expand=True,fill='both')
+
+        
 class SupervisorPage:
     def __init__(self):
         self.no_of_Emps = tk.StringVar()
@@ -387,6 +421,7 @@ class SupervisorPage:
         self.emp_Table.heading('Id', text='Id')
         self.emp_Table.heading('sex', text='Sex')
         self.emp_Table.heading('Job', text='Job')
+        self.emp_Table.bind('<KeyPress-Escape>',lambda event : self.backtologin())
 
         for emp in employees:
              self.emp_Table.insert(parent='',index=tk.END,values=emp)
@@ -429,6 +464,10 @@ class SupervisorPage:
     def hide_formpage(self):
         self.form_frame.pack_forget()
 
+    def hide_form_page(self):
+        self.hide_formpage()
+        self.createWidgets()
+    
     def showDependents(self):
         self.frame_buttons.pack_forget()
         self.frame_employeestable.pack_forget()
@@ -461,12 +500,28 @@ class SupervisorPage:
         self.frame_Deps.pack_forget()
         self.createWidgets()
 
+    def reset_vars(self):
+        self.var1.set('')
+        self.var2.set('')
+        self.var3.set('')
+        self.var4.set('')
+        self.var5.set('')
+        self.var6.set('')
+        self.var7.set('')
+        self.var8.set('')
+        self.var9.set('')
+        self.var10.set('')
+        self.var11.set('')
+    
     def formpage(self,page):
         self.frame_buttons.pack_forget()
         self.frame_employeestable.pack_forget()
         self.frame_noofemps.pack_forget()
         self.form_frame.pack()
 
+        if page == "Add":
+            self.reset_vars()
+        
         self.frame1 = tk.Frame(self.form_frame)
         self.frame1.pack(side='top',expand=True,fill='both')
 
@@ -504,66 +559,69 @@ class SupervisorPage:
         self.frame12.pack(side='top',expand=True,fill='both')
 
         self.label1 = tk.Label(self.frame1, text="SSN:")
-        self.label1.pack(side='left',pady=5)
+        self.label1.pack(side='left',pady=5 , expand = True)
         self.entry1 = tk.Entry(self.frame1, textvariable=self.var1)
-        self.entry1.pack(pady=5)
+        self.entry1.pack(pady=5,expand=True)
 
         self.label2 = tk.Label(self.frame2, text="Id:")
-        self.label2.pack(side='left',pady=5)
+        self.label2.pack(side='left',pady=5,expand=True)
         self.entry2 = tk.Entry(self.frame2, textvariable=self.var2,state='disabled')
-        self.entry2.pack(pady=5)
+        self.entry2.pack(pady=5,expand=True)
 
         self.label3 = tk.Label(self.frame3, text="Password:")
-        self.label3.pack(side='left',pady=5)
+        self.label3.pack(side='left',pady=5,expand=True)
         self.entry3 = tk.Entry(self.frame3, textvariable=self.var3)
-        self.entry3.pack(pady=5)
+        self.entry3.pack(pady=5,expand=True)
 
         self.label4 = tk.Label(self.frame4, text="Name:")
-        self.label4.pack(side='left',pady=5)
+        self.label4.pack(side='left',pady=5,expand=True)
         self.entry4 = tk.Entry(self.frame4, textvariable=self.var4)
-        self.entry4.pack(pady=5)
+        self.entry4.pack(pady=5,expand=True)
         
         self.label5 = tk.Label(self.frame5, text="Sex:")
-        self.label5.pack(side='left',pady=5)
+        self.label5.pack(side='left',pady=5,expand=True)
         self.entry5 = tk.Entry(self.frame5, textvariable=self.var5)
-        self.entry5.pack(pady=5)
+        self.entry5.pack(pady=5,expand=True)
 
         self.label6 = tk.Label(self.frame6, text="Salary:")
-        self.label6.pack(side='left',pady=5)
+        self.label6.pack(side='left',pady=5,expand=True)
         self.entry6 = tk.Entry(self.frame6, textvariable=self.var6)
-        self.entry6.pack(pady=5)
+        self.entry6.pack(pady=5,expand=True)
 
         self.label7 = tk.Label(self.frame7, text="Birth Date:")
-        self.label7.pack(side='left',pady=5)
+        self.label7.pack(side='left',pady=5,expand=True)
         self.entry7 = tk.Entry(self.frame7, textvariable=self.var7)
-        self.entry7.pack(pady=5)
+        self.entry7.pack(pady=5,expand=True)
 
         self.label8 = tk.Label(self.frame8, text="Address:")
-        self.label8.pack(side='left',pady=5)
+        self.label8.pack(side='left',pady=5,expand=True)
         self.entry8 = tk.Entry(self.frame8, textvariable=self.var8)
-        self.entry8.pack(pady=5)
+        self.entry8.pack(pady=5,expand=True)
 
         self.label9 = tk.Label(self.frame9, text="SuperSSN:")
-        self.label9.pack(side='left',pady=5)
+        self.label9.pack(side='left',pady=5,expand=True)
         self.entry9 = tk.Entry(self.frame9, textvariable=self.var9)
-        self.entry9.pack(pady=5)
+        self.entry9.pack(pady=5,expand=True)
 
         self.label10 = tk.Label(self.frame10, text="Branch:")
-        self.label10.pack(side='left',pady=5)
+        self.label10.pack(side='left',pady=5,expand=True)
         self.entry10 = tk.Entry(self.frame10, textvariable=self.var10)
-        self.entry10.pack(pady=5)
+        self.entry10.pack(pady=5,expand=True)
 
         self.label11 = tk.Label(self.frame11, text="Job:")
-        self.label11.pack(side='left',pady=5)
+        self.label11.pack(side='left',pady=5,expand=True)
         self.entry11 = tk.Entry(self.frame11, textvariable=self.var11)
-        self.entry11.pack(pady=5)
+        self.entry11.pack(pady=5,expand=True)
 
         if page == "update":
             self.save_button = tk.Button(self.frame12, text="Save", command=self.updateEmployee)
-            self.save_button.pack(pady=10)
+            self.save_button.pack(side='left',padx= 10,pady=35, ipadx= 10, ipady=10,expand=True)
         elif page == "Add":
             self.save_button = tk.Button(self.frame12, text="Save", command=self.addEmployee)
-            self.save_button.pack(pady=10)
+            self.save_button.pack(side='left',padx= 10,pady=35, ipadx= 10, ipady=10,expand=True)
+
+        self.back_button = tk.Button(self.frame12, text="Back", command=self.hide_form_page)
+        self.back_button.pack(side='left', pady=35, ipadx= 10, ipady=10, expand=True)
    
     def updateEmployee(self):
         SSN = self.var1.get()
@@ -636,10 +694,23 @@ class SupervisorPage:
         cursor.execute("exec view_employees ?", (self.supervisorId,))
         emps = cursor.fetchall()
         return emps
+    
     def show_frame(self):
         self.content.pack(expand=True,fill='both')
+    
     def hide_frame(self):
         self.content.pack_forget()
+
+    def backtologin(self):
+        login_page.id_entry.delete(0,'end')
+        login_page.password_entry.delete(0,'end')
+        self.frame_buttons.pack_forget()
+        self.frame_employeestable.pack_forget()
+        self.frame_Deps.pack_forget()
+        self.frame_noofemps.pack_forget()
+        self.content.pack_forget()
+        main_window_label.pack(expand=True,fill="both")
+        main_buttons.pack(side='bottom',expand=True,fill='both')
 
 class EmployeePage:
     def __init__(self):
@@ -657,8 +728,11 @@ class EmployeePage:
 
         self.orders_button = tk.Button(self.show_main_buttons,text="Orders",height=3,width=12,command=self.show_orders)
         self.orders_button.pack(side='left',expand=True)
+        self.orders_button.bind('<KeyPress-Escape>',lambda event : self.backtologin())
+
         self.Reservations_button = tk.Button(self.show_main_buttons,text="Reservations",height=3,width=12 , command=self.show_reservations)
         self.Reservations_button.pack(side='right',expand=True)
+        self.Reservations_button.bind('<KeyPress-Escape>',lambda event : self.backtologin())
 
     def getEmpbranch(self):
         cursor.execute('exec ViewAll_Employee_Info ?',(self.Id,))
@@ -741,6 +815,15 @@ class EmployeePage:
     def show_frame(self):
         self.content.pack(expand=True,fill="both")
     
+    def backtologin(self):
+        login_page.id_entry.delete(0,'end')
+        login_page.password_entry.delete(0,'end')
+        self.Employee_main_label.pack_forget()
+        self.show_main_buttons.pack_forget()
+        self.content.pack_forget()
+        main_window_label.pack(expand=True,fill="both")
+        main_buttons.pack(side='bottom',expand=True,fill='both')
+    
 def display():
     main_buttons.pack_forget()
     login_page.show_frame()
@@ -774,7 +857,7 @@ main_window.geometry("1000x600")
 main_window.title("Arabisqly")
 main_window_label = tk.Label(main_window,text="Welcome to Arabisq",font=("courier new bold", 42))
 main_window_label.pack(expand=True,fill="both")
-main_buttons = tk.Frame(main_window)
+main_buttons = tk.Frame(main_window,background="Blue")
 main_buttons.pack(side='bottom',expand=True,fill='both')
 main_window_button = tk.Button(main_buttons,text="Start",height=2,width=10,command= display)
 main_window_button.pack(side='left',expand=True)
