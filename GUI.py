@@ -25,7 +25,7 @@ class LoginPage:
         self.password_entry = tk.Entry(self.content, textvariable=self.password_var, show="*")
         self.password_entry.pack(pady=5)
 
-        self.login_button = tk.Button(self.content, text="Login", command=self.login)
+        self.login_button = tk.Button(self.content, text="Login",height=2,width=10, command=self.login)
         self.login_button.pack(pady=5)
         self.login_button.bind('<KeyPress-Return>',lambda event:self.login())
     def login(self):
@@ -45,6 +45,9 @@ class LoginPage:
                 elif self.Job == 'Supervisor':
                     supervisor_page = SupervisorPage()
                     supervisor_page.show_frame()
+                else:
+                    employee_page = EmployeePage()
+                    employee_page.show_frame()
 
             else:
                 messagebox.showerror("Login Failed", "Invalid username or password")
@@ -117,7 +120,7 @@ class ManagerPage:
         self.emp_Table.bind('<<TreeviewSelect>>', self.item_select)
         self.emp_Table.bind('<Delete>', self.delete_item)
 
-        self.emp_Table.pack(expand=True)
+        self.emp_Table.pack(fill='both',expand=True)
 
         self.insertEmp = Button(self.frame_buttons,text = "Add Employee" , bootstyle = 'primary', command = lambda : self.formpage("Add"))
         self.insertEmp.pack(side='left',expand=True)
@@ -305,7 +308,6 @@ class ManagerPage:
         self.var10.set(self.updEmp[0][9])
         self.var11.set(self.updEmp[0][10])
 
-
     def item_select(self,_):
         self.deleteobj = self.emp_Table.item(self.emp_Table.selection())['values']
         print(self.deleteobj[1])
@@ -389,7 +391,7 @@ class SupervisorPage:
         for emp in employees:
              self.emp_Table.insert(parent='',index=tk.END,values=emp)
 
-        self.emp_Table.pack(expand=True)
+        self.emp_Table.pack(expand=True,fill='both')
 
         self.insertEmp = Button(self.frame_buttons,text = "Add Employee" , bootstyle = 'primary', command = lambda : self.formpage("Add"))
         self.insertEmp.pack(side='left',expand=True)
@@ -452,9 +454,8 @@ class SupervisorPage:
             self.depend_Label = ttk.Label(self.frame_Deps, text="This Employee\n has NO Dependents" ,font=('Arial',36), justify='center')
             self.depend_Label.pack(expand=True,fill='both')
 
-        self.back_button = Button(self.frame_Deps, text= "Back", command= self.Hide_Dependants)
-        self.back_button.pack(expand=True)
-
+        self.back_button = tk.Button(self.frame_Deps, text= "Back",height=2,width=10, command= self.Hide_Dependants)
+        self.back_button.pack(side='bottom',expand=True)
 
     def Hide_Dependants(self):
         self.frame_Deps.pack_forget()
@@ -622,7 +623,6 @@ class SupervisorPage:
         
     def deleteEmpbyid(self):
         id = self.deleteobj[1]
-        print(id)
         cursor.execute("exec RemoveEmployeeById ?", (id,))
         cursor.commit()
         self.refresh()
@@ -641,17 +641,108 @@ class SupervisorPage:
     def hide_frame(self):
         self.content.pack_forget()
 
+class EmployeePage:
+    def __init__(self):
+        self.content = tk.Frame(main_window)
+        self.Id = login_page.id_var.get()
+        self.branch = tk.StringVar()
+        self.createWidgets()
+
+    def createWidgets(self):
+        self.Employee_main_label = tk.Label(main_window,text="What would you\n like to see?",font=("Arial", 32))
+        self.Employee_main_label.pack(expand=True,fill="both")
+
+        self.show_main_buttons = tk.Frame(main_window)
+        self.show_main_buttons.pack(side='bottom',expand=True,fill='both')
+
+        self.orders_button = tk.Button(self.show_main_buttons,text="Orders",height=3,width=12,command=self.show_orders)
+        self.orders_button.pack(side='left',expand=True)
+        self.Reservations_button = tk.Button(self.show_main_buttons,text="Reservations",height=3,width=12)
+        self.Reservations_button.pack(side='right',expand=True)
+
+    def getEmpbranch(self):
+        cursor.execute('exec ViewAll_Employee_Info ?',(self.Id,))
+        empbranch = cursor.fetchall()
+        print (empbranch)
+        return (empbranch[0][9])
+
+    def show_orders(self):
+        self.Employee_main_label.pack_forget()
+        self.show_main_buttons.pack_forget()
+
+        branch = self.getEmpbranch()
+        cursor.execute('ShowOrdersInBranch ?',(branch,))
+        Orders = cursor.fetchall()
+
+        self.Orders_frame = tk.Frame(main_window)
+        self.Orders_frame.pack(side='bottom',expand=True,fill='both')
+        if len(Orders) > 0 :
+            self.Orders_table = ttk.Treeview(self.Orders_frame, columns=('OrderID', 'Date','Type','CID','Branch','Price'),show='headings')
+            self.Orders_table.heading('OrderID', text='ID')
+            self.Orders_table.heading('Date', text='Date')
+            self.Orders_table.heading('Type', text='Type')
+            self.Orders_table.heading('CID', text='Customer ID')
+            self.Orders_table.heading('Branch', text='Branch')
+            self.Orders_table.heading('Price', text='Price')
+
+            for o in Orders:
+                self.Orders_table.insert(parent='',index=tk.END,values=o)
+
+            self.Orders_table.pack(expand=True,fill='both')
+        else:
+            self.depend_Label = ttk.Label(self.Orders_frame, text="This Branch\n has NO Orders" ,font=('Arial',36), justify='center')
+            self.depend_Label.pack(expand=True,fill='both')
+
+        self.back_button = tk.Button(self.Orders_frame, text= "Back",height=2,width=10, command=self.hide_orders)
+        self.back_button.pack(side='bottom',expand=True)
+
+    def hide_orders(self):
+        self.Orders_frame.pack_forget()
+        self.createWidgets()
+
+    def show_frame(self):
+        self.content.pack(expand=True,fill="both")
+    
 def display():
-    main_window_button.pack_forget()
+    main_buttons.pack_forget()
     login_page.show_frame()
+
+def hide_menu():
+    main_menu.pack_forget()
+    main_buttons.pack(side='bottom',expand=True,fill='both')
+    main_window_label.pack(expand=True,fill="both")
+
+def show_menu():
+    main_buttons.pack_forget()
+    main_window_label.pack_forget()
+    main_menu.pack(expand=True,fill='both')    
+    cursor.execute('exec ShowMenu')
+    Meals = cursor.fetchall()
+    Menu = ttk.Treeview(main_menu, columns=('Meal', 'Price','Type'),show='headings')
+    Menu.heading('Meal', text='Meal Name')
+    Menu.heading('Price', text='Price')
+    Menu.heading('Type', text='Meal Type')
+
+    for meal in Meals:
+        Menu.insert(parent='',index=tk.END,values=meal)
+
+    Menu.pack(expand=True,fill='both')
+
+    menu_back_button = tk.Button(main_menu, text= "Back",height=2,width=10, command= hide_menu)
+    menu_back_button.pack(expand=True)
 
 main_window = Window(themename='darkly')
 main_window.geometry("1000x600")
 main_window.title("Arabisqly")
 main_window_label = tk.Label(main_window,text="Welcome to Arabisq",font=("courier new bold", 42))
 main_window_label.pack(expand=True,fill="both")
-main_window_button = tk.Button(main_window,text="Start",height=2,width=10,command= display)
-main_window_button.pack(expand=True)
+main_buttons = tk.Frame(main_window)
+main_buttons.pack(side='bottom',expand=True,fill='both')
+main_window_button = tk.Button(main_buttons,text="Start",height=2,width=10,command= display)
+main_window_button.pack(side='left',expand=True)
+main_window_button_menu = tk.Button(main_buttons,text="Menu",height=2,width=10,command= show_menu)
+main_window_button_menu.pack(side='right',expand=True)
+main_menu = tk.Frame(main_window)
 login_page = LoginPage()
 
 main_window.mainloop()
