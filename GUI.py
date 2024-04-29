@@ -657,7 +657,7 @@ class EmployeePage:
 
         self.orders_button = tk.Button(self.show_main_buttons,text="Orders",height=3,width=12,command=self.show_orders)
         self.orders_button.pack(side='left',expand=True)
-        self.Reservations_button = tk.Button(self.show_main_buttons,text="Reservations",height=3,width=12)
+        self.Reservations_button = tk.Button(self.show_main_buttons,text="Reservations",height=3,width=12 , command=self.show_reservations)
         self.Reservations_button.pack(side='right',expand=True)
 
     def getEmpbranch(self):
@@ -677,6 +677,7 @@ class EmployeePage:
         self.Orders_frame = tk.Frame(main_window)
         self.Orders_frame.pack(side='bottom',expand=True,fill='both')
         if len(Orders) > 0 :
+            main_window.geometry("1200x600")
             self.Orders_table = ttk.Treeview(self.Orders_frame, columns=('OrderID', 'Date','Type','CID','Branch','Price'),show='headings')
             self.Orders_table.heading('OrderID', text='ID')
             self.Orders_table.heading('Date', text='Date')
@@ -690,14 +691,51 @@ class EmployeePage:
 
             self.Orders_table.pack(expand=True,fill='both')
         else:
-            self.depend_Label = ttk.Label(self.Orders_frame, text="This Branch\n has NO Orders" ,font=('Arial',36), justify='center')
-            self.depend_Label.pack(expand=True,fill='both')
+            self.order_Label = ttk.Label(self.Orders_frame, text="This Branch\n has NO Orders" ,font=('Arial',36), justify='center')
+            self.order_Label.pack(expand=True,fill='both')
 
         self.back_button = tk.Button(self.Orders_frame, text= "Back",height=2,width=10, command=self.hide_orders)
         self.back_button.pack(side='bottom',expand=True)
 
     def hide_orders(self):
         self.Orders_frame.pack_forget()
+        main_window.geometry("1000x600")
+        self.createWidgets()
+    
+    def show_reservations(self):
+        self.Employee_main_label.pack_forget()
+        self.show_main_buttons.pack_forget()
+
+        branch = self.getEmpbranch()
+        cursor.execute('ShowReservationsInBranch ?',(branch,))
+        Reservations = cursor.fetchall()
+
+        self.reservations_frame = tk.Frame(main_window)
+        self.reservations_frame.pack(side='bottom',expand=True,fill='both')
+        if len(Reservations) > 0 :
+            main_window.geometry("1200x600")
+            self.Reservations_table = ttk.Treeview(self.reservations_frame, columns=('CID', 'TableNo','Reservation_Date','TimeSlot','Name','PhoneNumber'),show='headings')
+            self.Reservations_table.heading('CID', text='Customer ID')
+            self.Reservations_table.heading('TableNo', text='TableNo')
+            self.Reservations_table.heading('Reservation_Date', text='Reservation_Date')
+            self.Reservations_table.heading('TimeSlot', text='TimeSlot')
+            self.Reservations_table.heading('Name', text='Name')
+            self.Reservations_table.heading('PhoneNumber', text='Phone Number')
+
+            for r in Reservations:
+                self.Reservations_table.insert(parent='',index=tk.END,values=r)
+
+            self.Reservations_table.pack(expand=True,fill='both')
+        else:
+            self.reservation_Label = ttk.Label(self.reservations_frame, text="This Branch\n has NO Reservations" ,font=('Arial',36), justify='center')
+            self.reservation_Label.pack(expand=True,fill='both')
+
+        self.back_button = tk.Button(self.reservations_frame, text= "Back",height=2,width=10, command=self.hide_reservations)
+        self.back_button.pack(side='bottom',expand=True)
+
+    def hide_reservations(self):
+        self.reservations_frame.pack_forget()
+        main_window.geometry("1000x600")
         self.createWidgets()
 
     def show_frame(self):
