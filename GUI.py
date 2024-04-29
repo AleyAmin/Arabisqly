@@ -42,6 +42,9 @@ class LoginPage:
                 if self.Job == 'Manager':
                     manager_page = ManagerPage()
                     manager_page.show_frame()
+                elif self.Job == 'Supervisor':
+                    supervisor_page = SupervisorPage()
+                    supervisor_page.show_frame()
 
             else:
                 messagebox.showerror("Login Failed", "Invalid username or password")
@@ -106,6 +109,54 @@ class ManagerPage:
     
     def getEmps(self):
         cursor.execute("exec View_Branch_Employee ?", (self.managerId,))
+        emps = cursor.fetchall()
+        return emps
+    
+    def show_frame(self):
+        self.content.pack(expand=True,fill='both')
+    def hide_frame(self):
+        self.content.pack_forget()
+
+class SupervisorPage:
+    def __init__(self):
+        self.no_of_Emps = tk.StringVar()
+        self.no_of_Orders = tk.StringVar()
+        self.supervisorId = login_page.id_var.get()
+        self.content = tk.Frame(main_window)
+        self.createWidgets()
+    def createWidgets(self):
+        self.frame_employeestable = tk.Frame(self.content)
+        self.frame_employeestable.pack(side='bottom',expand=True,fill='both')
+
+        self.frame_noofoorders = tk.Frame(self.content)
+        self.frame_noofoorders.pack(side='left',expand=True,fill='both')
+
+        self.frame_noofemps = tk.Frame(self.content)
+        self.frame_noofemps.pack(side='left',expand=True,fill='both')
+
+        self.no_of_Emps = self.getNoofEmps()
+        self.label_noofemps = tk.Label(self.frame_noofemps,text=f'No Of Employees:\n {self.no_of_Emps}',justify="center",font=("Arial ", 18))
+        self.label_noofemps.pack(expand=True,pady=15)
+
+        employees = self.getEmps()
+        emp_Table = ttk.Treeview(self.frame_employeestable, columns=('Name', 'Id','sex','Job'),show='headings')
+        emp_Table.heading('Name', text='Name')
+        emp_Table.heading('Id', text='Id')
+        emp_Table.heading('sex', text='Sex')
+        emp_Table.heading('Job', text='Job')
+
+        for emp in employees:
+            emp_Table.insert(parent='',index=tk.END,values=emp)
+
+        emp_Table.pack(expand=True)
+
+    def getNoofEmps(self):
+        cursor.execute("exec view_NoOfEmployees ?", (self.supervisorId,))
+        res = cursor.fetchall()
+        return str(res[0][0])
+    
+    def getEmps(self):
+        cursor.execute("exec view_employees ?", (self.supervisorId,))
         emps = cursor.fetchall()
         return emps
     
