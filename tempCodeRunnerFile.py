@@ -1,1 +1,1 @@
-pack_forget()
+self.createWidgets()
